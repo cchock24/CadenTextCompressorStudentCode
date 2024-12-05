@@ -31,59 +31,7 @@ public class TextCompressor {
     final static char[] special = {'A','B','C','D','E', 'F','G','H','I','J','K','L','M','N','O','P','Q',
             'R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k',
             'l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
-    // Alphabet Codes
-    final static int A = 1;
-    final static int B = 2;
-    final static int C = 3;
-    final static int D = 4;
-    final static int E = 5;
-    final static int F = 6;
-    final static int G = 7;
-    final static int H = 8;
-    final static int I = 9;
-    final static int J = 10;
-    final static int K = 11;
-    final static int L = 12;
-    final static int M = 13;
-    final static int N = 14;
-    final static int O = 15;
-    final static int P = 16;
-    final static int Q = 17;
-    final static int R = 18;
-    final static int S = 19;
-    final static int T = 20;
-    final static int U = 21;
-    final static int V = 22;
-    final static int W = 23;
-    final static int X = 24;
-    final static int Y = 25;
-    final static int Z = 26;
-    final static int a = 27;
-    final static int b = 28;
-    final static int c = 29;
-    final static int d = 30;
-    final static int e = 31;
-    final static int f = 32;
-    final static int g = 33;
-    final static int h = 34;
-    final static int i = 35;
-    final static int j = 36;
-    final static int k = 37;
-    final static int l = 38;
-    final static int m = 39;
-    final static int n = 40;
-    final static int o = 41;
-    final static int p = 42;
-    final static int q = 43;
-    final static int r = 44;
-    final static int s = 45;
-    final static int t = 46;
-    final static int u = 47;
-    final static int v = 48;
-    final static int w = 49;
-    final static int x = 50;
-    final static int y = 51;
-    final static int z = 52;
+    // Special Codes
     final static int the = 53;
     final static int be = 54;
     final static int to = 55;
@@ -117,7 +65,17 @@ public class TextCompressor {
     private static void expand() {
 
         // TODO: Complete the expand() method
-
+        while(!BinaryStdIn.isEmpty()){
+            int key = 6;
+            int sp = BinaryStdIn.readInt(key);
+            if(sp != 63){
+                BinaryStdOut.write(special[sp]);
+            }
+            else{
+                char c = BinaryStdIn.readChar();
+                BinaryStdOut.write(c);
+            }
+        }
         BinaryStdOut.close();
     }
 
