@@ -25,68 +25,45 @@
  *  The {@code TextCompressor} class provides static methods for compressing
  *  and expanding natural language through textfile input.
  *
- *  @author Zach Blick, YOUR NAME HERE
+ *  @author Zach Blick, Caden Chock
  */
+// 10 Bit Code
 public class TextCompressor {
-    final static char[] special = {'A','B','C','D','E', 'F','G','H','I','J','K','L','M','N','O','P','Q',
-            'R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k',
-            'l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
-    // Special Codes
-    final static int the = 53;
-    final static int be = 54;
-    final static int to = 55;
-    final static int of = 56;
-    final static int and = 57;
-    final static int in = 58;
-    final static int that = 59;
-    final static int have = 60;
-    final static int it = 61;
-    final static int For = 62;
-    // key to change from 6 bit to 8 bit
-    final static int change = 63;
+    // Largest Num represent with 10 bits
+    final static int bitLimit = 1024;
+    final static int EOF = 256;
     private static void compress() {
-
-        // TODO: Complete the compress() method
+        int currentCode = 257;
+        TST codes = new TST();
+        //Add Extended ASCII to TST
+        for(int i = 0; i < 255; i++){
+            codes.insert(""+(char) i, i);
+        }
         String s = BinaryStdIn.readString();
         int n = s.length();
-        BinaryStdOut.close();
-        for (int i = 0; i < n; i++) {
-            int special = getSpecial(s.charAt(i));
-            if(special != -1){
-                BinaryStdOut.write(special, 6);
-            }
-            else{
-                BinaryStdOut.write(63,6);
-                BinaryStdOut.write(s.charAt(i));
+        for(int i = 0; i < n; i++){
+            // Check Largest Prefix
+            String pre = codes.getLongestPrefix(s, i);
+            i = i + pre.length();
+            int code = codes.lookup(pre);
+            BinaryStdOut.write(code, 10);
+            // Add Prefix of Next Char if not last Char
+            if(i < n-1 && currentCode < bitLimit){
+                String check = pre + s.charAt(i);
+                codes.insert(check, currentCode);
+                currentCode++;
             }
         }
+        BinaryStdOut.write(EOF,10);
     }
+
+
 
     private static void expand() {
-
         // TODO: Complete the expand() method
-        while(!BinaryStdIn.isEmpty()){
-            int key = 6;
-            int sp = BinaryStdIn.readInt(key);
-            if(sp != 63){
-                BinaryStdOut.write(special[sp]);
-            }
-            else{
-                char c = BinaryStdIn.readChar();
-                BinaryStdOut.write(c);
-            }
-        }
-        BinaryStdOut.close();
+
     }
 
-    public static int getSpecial(char c){
-        for(int i = 0; i < special.length; i++){
-           if(c == special[i]){
-               return i;
-           }
-        }
-        return -1;
-    }
 
     public static void main(String[] args) {
         if      (args[0].equals("-")) compress();
