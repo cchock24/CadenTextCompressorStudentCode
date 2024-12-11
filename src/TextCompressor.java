@@ -61,7 +61,35 @@ public class TextCompressor {
 
     private static void expand() {
         // TODO: Complete the expand() method
-
+        int currentIndex = 257;
+        String[] codes = new String[bitLimit];
+        boolean end = false;
+        // 257 = Extended ASCII + EOF
+        for(int i = 0; i < 257; i++){
+            if(i == 256){
+                codes[i] = "EOF";
+            }
+            else{
+                codes[i] = ""+(char) i;
+            }
+        }
+        int num = BinaryStdIn.readInt(10);
+        while(end){
+            if(num == 256){
+                end = true;
+            }
+            else{
+                String s = codes[num];
+                BinaryStdOut.write(s);
+                int next = BinaryStdIn.readInt(10);
+                if(next != 256 && currentIndex < bitLimit) {
+                    s = s + codes[next];
+                    codes[currentIndex] = s;
+                    num = next;
+                    currentIndex++;
+                }
+            }
+        }
     }
 
 
