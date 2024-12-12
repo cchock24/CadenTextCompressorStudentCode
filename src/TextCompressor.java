@@ -30,31 +30,33 @@
 // 10 Bit Code
 public class TextCompressor {
     // Largest Num represent with 10 bits
-    final static int bitLimit = 1024;
+    final static int bitLimit = 4096;
     final static int EOF = 256;
+    final static int bitSize = 12;
+
     private static void compress() {
         int currentCode = 257;
         TST codes = new TST();
         //Add Extended ASCII to TST
-        for(int i = 0; i < 255; i++){
+        for(int i = 0; i < 256; i++){
             codes.insert(""+(char) i, i);
         }
         String s = BinaryStdIn.readString();
-        int n = s.length();
-        for(int i = 0; i < n; i++){
+        int length = s.length();
+        for(int i = 0; i < length; i++){
             // Check Largest Prefix
             String pre = codes.getLongestPrefix(s, i);
-            i = i + pre.length();
             int code = codes.lookup(pre);
-            BinaryStdOut.write(code, 10);
+            BinaryStdOut.write(code, bitSize);
+            i = i + pre.length()-1;
             // Add Prefix of Next Char if not last Char
-            if(i < n-1 && currentCode < bitLimit){
-                String check = pre + s.charAt(i);
-                codes.insert(check, currentCode);
-                currentCode++;
+            if(i < length-1 && currentCode < bitLimit){
+                String check = pre + s.charAt(i+1);
+                codes.insert(check, currentCode++);
             }
         }
-        BinaryStdOut.write(EOF,10);
+        BinaryStdOut.write(EOF,bitSize);
+        BinaryStdOut.close();
     }
 
 
@@ -63,33 +65,31 @@ public class TextCompressor {
         // TODO: Complete the expand() method
         int currentIndex = 257;
         String[] codes = new String[bitLimit];
-        boolean end = false;
         // 257 = Extended ASCII + EOF
-        for(int i = 0; i < 257; i++){
-            if(i == 256){
+        for(int i = 0; i < currentIndex; i++){
+            if(i == EOF){
                 codes[i] = "EOF";
             }
             else{
                 codes[i] = ""+(char) i;
             }
         }
-        int num = BinaryStdIn.readInt(10);
-        while(end){
-            if(num == 256){
-                end = true;
+        int num = BinaryStdIn.readInt(bitSize);
+        while(num != EOF){
+            String s = codes[num];
+            int next = BinaryStdIn.readInt(bitSize);
+            String nextS = codes[next];
+            if(codes[next] == null){
+                nextS = s + s.charAt(0);
             }
-            else{
-                String s = codes[num];
-                BinaryStdOut.write(s);
-                int next = BinaryStdIn.readInt(10);
-                if(next != 256 && currentIndex < bitLimit) {
-                    s = s + codes[next];
-                    codes[currentIndex] = s;
-                    num = next;
-                    currentIndex++;
-                }
+            if(next != EOF && currentIndex < bitLimit) {
+                codes[currentIndex] = s + nextS.charAt(0);
+                currentIndex++;
             }
+            BinaryStdOut.write(s);
+            num = next;
         }
+        BinaryStdOut.close();
     }
 
 
