@@ -27,9 +27,9 @@
  *
  *  @author Zach Blick, Caden Chock
  */
-// 10 Bit Code
+// 12 Bit Code
 public class TextCompressor {
-    // Largest Num represent with 10 bits
+    // Largest Num represent with 12 bits
     final static int bitLimit = 4096;
     final static int EOF = 256;
     final static int bitSize = 12;
@@ -41,12 +41,14 @@ public class TextCompressor {
         for(int i = 0; i < 256; i++){
             codes.insert(""+(char) i, i);
         }
+        // Get First Character
         String s = BinaryStdIn.readString();
         int length = s.length();
         for(int i = 0; i < length; i++){
             // Check Largest Prefix
             String pre = codes.getLongestPrefix(s, i);
             int code = codes.lookup(pre);
+            // Add Largest Prefix to Binary File
             BinaryStdOut.write(code, bitSize);
             i = i + pre.length()-1;
             // Add Prefix of Next Char if not last Char
@@ -55,6 +57,7 @@ public class TextCompressor {
                 codes.insert(check, currentCode++);
             }
         }
+        // Add EOF
         BinaryStdOut.write(EOF,bitSize);
         BinaryStdOut.close();
     }
@@ -74,18 +77,23 @@ public class TextCompressor {
                 codes[i] = ""+(char) i;
             }
         }
+        // Get Fist Number
         int num = BinaryStdIn.readInt(bitSize);
         while(num != EOF){
+            // Get Corresponding String
             String s = codes[num];
             int next = BinaryStdIn.readInt(bitSize);
             String nextS = codes[next];
+            // Check for Edge Case
             if(codes[next] == null){
                 nextS = s + s.charAt(0);
             }
+            // If next int is not EOF and can be added, add it
             if(next != EOF && currentIndex < bitLimit) {
                 codes[currentIndex] = s + nextS.charAt(0);
                 currentIndex++;
             }
+            // Write out String for the Int
             BinaryStdOut.write(s);
             num = next;
         }
